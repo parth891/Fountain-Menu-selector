@@ -115,9 +115,9 @@ body {
 }
 .name-input-wrap { width: 100%; max-width: 320px; }
 .name-input-label { font-size: 12px; color: var(--gold); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; display: block; }
-.name-input {
+.name-select {
   width: 100%;
-  padding: 14px 16px;
+  padding: 14px 40px 14px 16px;
   background: rgba(255,255,255,0.07);
   border: 0.5px solid var(--border-strong);
   border-radius: var(--radius);
@@ -127,9 +127,15 @@ body {
   outline: none;
   transition: border 0.15s;
   -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23B8933F' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
 }
-.name-input:focus { border-color: var(--gold); }
-.name-input::placeholder { color: rgba(255,255,255,0.3); }
+.name-select:focus { border-color: var(--gold); }
+.name-select option { background: #3A3835; color: white; }
+.name-select option[value=""] { color: rgba(255,255,255,0.4); }
 
 .btn-primary {
   width: 100%;
@@ -147,31 +153,6 @@ body {
   transition: background 0.15s, transform 0.1s;
 }
 .btn-primary:active { background: var(--gold-dark); transform: scale(0.98); }
-
-.existing-users { margin-top: 32px; width: 100%; max-width: 320px; }
-.existing-label { font-size: 12px; color: rgba(255,255,255,0.4); letter-spacing: 0.08em; margin-bottom: 10px; text-transform: uppercase; }
-.user-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(255,255,255,0.06);
-  border: 0.5px solid var(--border);
-  border-radius: 20px;
-  padding: 7px 12px;
-  margin: 4px 4px 4px 0;
-  cursor: pointer;
-  font-size: 13px;
-  color: rgba(255,255,255,0.7);
-  transition: background 0.15s;
-}
-.user-pill:active { background: rgba(255,255,255,0.12); }
-.user-pill .av-sm {
-  width: 18px; height: 18px;
-  border-radius: 50%;
-  background: var(--gold);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 9px; font-weight: 500; color: var(--charcoal);
-}
 
 /* ── PKG TABS ── */
 .pkg-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); }
@@ -315,13 +296,10 @@ body {
 
 /* ── BOTTOM BAR ── */
 .bottom-bar {
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
   background: var(--charcoal);
   padding: 12px 16px;
   display: flex;
   gap: 10px;
-  z-index: 50;
   border-top: 1px solid rgba(255,255,255,0.08);
 }
 .btn-save {
@@ -354,27 +332,6 @@ body {
 
 /* ── SUMMARY SCREEN ── */
 .summary-screen { padding: 16px 12px 80px; }
-.summary-header { padding: 0 4px 16px; }
-.summary-header h2 { font-family: 'Cormorant Garamond', serif; font-size: 26px; color: var(--charcoal); }
-.summary-header p { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
-
-.voter-section { margin-bottom: 20px; }
-.voter-section-head {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
-  padding: 0 4px;
-}
-.voter-av-lg {
-  width: 34px; height: 34px;
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 13px; font-weight: 500;
-}
-.voter-name-info h3 { font-size: 15px; font-weight: 500; color: var(--text); }
-.voter-name-info p { font-size: 12px; color: var(--text-muted); }
-
 .summary-pkg-card {
   background: white;
   border: 0.5px solid var(--border);
@@ -403,6 +360,151 @@ body {
 }
 .summary-item { padding: 6px 16px; font-size: 14px; color: var(--text); display: flex; align-items: center; gap: 8px; }
 .summary-item::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
+
+/* ── RESULTS DASHBOARD ── */
+.results-screen { padding: 16px 12px 100px; }
+.results-screen-header { padding: 0 4px 16px; }
+.results-screen-header h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px;
+  color: var(--charcoal);
+}
+.results-screen-header p { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+
+.results-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.result-person-card {
+  background: white;
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+  box-shadow: var(--shadow);
+}
+.result-person-card.me { border-color: var(--gold); box-shadow: 0 2px 16px rgba(184,147,63,0.15); }
+.rpc-top { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.rpc-avatar {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 500; color: white;
+  flex-shrink: 0;
+}
+.rpc-info { min-width: 0; flex: 1; }
+.rpc-name { font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rpc-status { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+.rpc-count { font-size: 20px; font-family: 'Cormorant Garamond', serif; font-weight: 600; color: var(--charcoal); margin-bottom: 6px; }
+.rpc-count span { font-size: 12px; font-family: 'DM Sans', sans-serif; color: var(--text-muted); font-weight: 400; }
+.rpc-bar-bg { height: 5px; background: var(--cream-dark); border-radius: 3px; overflow: hidden; }
+.rpc-bar-fill { height: 100%; border-radius: 3px; transition: width 0.5s ease; }
+
+.results-divider {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  color: var(--charcoal);
+  margin: 4px 4px 12px;
+}
+
+.results-pkg-block { margin-bottom: 20px; }
+.results-pkg-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--charcoal);
+  color: var(--gold-light);
+  font-size: 11px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  padding: 6px 12px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+}
+
+.results-category {
+  background: white;
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 8px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.results-cat-head {
+  padding: 10px 14px 8px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom: 0.5px solid var(--cream-dark);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.results-cat-voters {
+  display: flex;
+  gap: 3px;
+}
+.results-cat-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.result-item-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-top: 0.5px solid var(--cream-dark);
+}
+.result-item-name {
+  font-size: 12px;
+  color: var(--text);
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.result-item-bar-wrap {
+  width: 56px;
+  height: 5px;
+  background: var(--cream-dark);
+  border-radius: 3px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.result-item-bar {
+  height: 100%;
+  background: var(--gold);
+  border-radius: 3px;
+}
+.result-item-dots { display: flex; gap: 3px; flex-shrink: 0; align-items: center; }
+.result-voter-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+.result-item-count {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  width: 14px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.results-empty {
+  text-align: center;
+  padding: 32px 16px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
 
 /* ── TOAST ── */
 .toast {
@@ -488,7 +590,12 @@ body {
   cursor: pointer;
 }
 
-/* ── NAV TABS ── */
+/* ── TAB BAR ── */
+.tab-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 50;
+}
 .nav-tabs {
   display: flex;
   background: var(--charcoal);
@@ -496,44 +603,42 @@ body {
 }
 .nav-tab {
   flex: 1;
-  padding: 8px;
+  padding: 8px 4px;
   text-align: center;
   cursor: pointer;
   border: none;
   background: none;
   font-family: 'DM Sans', sans-serif;
 }
-.nav-tab .nav-icon { font-size: 18px; display: block; }
-.nav-tab .nav-label { font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 0.05em; margin-top: 2px; display: block; text-transform: uppercase; }
+.nav-tab .nav-icon { font-size: 17px; display: block; }
+.nav-tab .nav-label { font-size: 9px; color: rgba(255,255,255,0.4); letter-spacing: 0.05em; margin-top: 2px; display: block; text-transform: uppercase; }
 .nav-tab.active .nav-label { color: var(--gold); }
-
-.tab-bar {
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
-  z-index: 50;
-}
 </style>
 </head>
 <body>
 
-<!-- ONBOARDING SCREEN -->
+<!-- ONBOARDING -->
 <div id="screen-onboard" class="screen active">
   <div class="onboard-wrap">
     <div class="onboard-logo">The Fountain<em>Restaurant · Banquet · Party Lawn</em></div>
     <p class="onboard-sub">Plan your menu together.<br>Pick dishes, see who chose what, export to WhatsApp.</p>
     <div class="name-input-wrap">
-      <label class="name-input-label" for="nameInput">Your name</label>
-      <input type="text" id="nameInput" class="name-input" placeholder="e.g. Parth" autocomplete="off" autocorrect="off" />
+      <label class="name-input-label" for="nameSelect">Select your name</label>
+      <select id="nameSelect" class="name-select">
+        <option value="">— Choose name —</option>
+        <option value="Parth">Parth</option>
+        <option value="Karan">Karan</option>
+        <option value="Isha">Isha</option>
+        <option value="Urvashi">Urvashi</option>
+        <option value="Hemant">Hemant</option>
+        <option value="Niharika">Niharika</option>
+      </select>
       <button class="btn-primary" onclick="startSession()">Continue</button>
-    </div>
-    <div class="existing-users" id="existingUsers" style="display:none">
-      <div class="existing-label">Or continue as</div>
-      <div id="userPills"></div>
     </div>
   </div>
 </div>
 
-<!-- MAIN APP SCREEN -->
+<!-- MAIN APP -->
 <div id="screen-main" class="screen">
   <div class="header">
     <div class="header-top">
@@ -561,15 +666,20 @@ body {
     <div class="sections-wrap" id="sectionsWrap"></div>
   </div>
 
-  <!-- SUMMARY TAB -->
+  <!-- ALL PICKS TAB -->
   <div id="tab-summary" class="tab-content" style="display:none">
     <div class="summary-screen" id="summaryContent"></div>
+  </div>
+
+  <!-- RESULTS TAB -->
+  <div id="tab-results" class="tab-content" style="display:none">
+    <div class="results-screen" id="resultsContent"></div>
   </div>
 
   <!-- TAB BAR -->
   <div class="tab-bar">
     <div class="bottom-bar" id="buildBar">
-      <button class="btn-save" id="saveBtn" onclick="saveSelections()">Save my picks</button>
+      <button class="btn-save" onclick="saveSelections()">Save my picks</button>
       <button class="btn-export" onclick="showExport()">Export ↗</button>
     </div>
     <div class="nav-tabs">
@@ -580,6 +690,10 @@ body {
       <button class="nav-tab" id="navSummary" onclick="showTab('summary')">
         <span class="nav-icon">◈</span>
         <span class="nav-label">All picks</span>
+      </button>
+      <button class="nav-tab" id="navResults" onclick="showTab('results')">
+        <span class="nav-icon">◉</span>
+        <span class="nav-label">Results</span>
       </button>
     </div>
   </div>
@@ -602,10 +716,14 @@ body {
 <div class="toast" id="toast"></div>
 
 <script>
-// ─── DATA ───────────────────────────────────────────────────────
+// ─── CONSTANTS ───────────────────────────────────────────────────
 const STORAGE_KEY = 'fountain_v2';
-const USER_COLORS = ['#B8933F','#2D6A4F','#8B2FC9','#C62828','#1565C0','#6D4C41','#00838F','#D81B60'];
+const FIXED_USERS = ['Parth','Karan','Isha','Urvashi','Hemant','Niharika'];
+const USER_COLORS = ['#B8933F','#2D6A4F','#8B2FC9','#C62828','#1565C0','#6D4C41'];
 
+function nameToUid(name) { return 'u_' + name.toLowerCase(); }
+
+// ─── MENU DATA ───────────────────────────────────────────────────
 const menuData = {
   welcomeDrinks: { label: 'Welcome drink', subs: {
     'Fresh juice – premium': ['Pineapple','Water Melon','Black Grapes','Orange','Sweet Lime','Ganga Jamuna','Black Grapes Water Melon','Palm Water Melon','Falsa Juice','Pineapple Orange','Black Grapes Tulsi Pudina','Green Grapes Juice','Green Grapes Tulsi Pudina','Mixed Shangria (Cranberry)','Mango Tango','Pineapple Kiwi Juice'],
@@ -713,74 +831,48 @@ const packages = {
   ]
 };
 
-// ─── STATE ──────────────────────────────────────────────────────
+// ─── STATE ───────────────────────────────────────────────────────
 let state = { users: {}, selections: {} };
-// selections[userId][pkg][sectionIdx] = [items]
 let currentUser = null;
 let currentPkg = '790';
 
 function loadState() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) state = JSON.parse(raw);
-  } catch(e) {}
+  try { const r = localStorage.getItem(STORAGE_KEY); if (r) state = JSON.parse(r); } catch(e) {}
 }
 function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
 
-function getUserColor(userId) {
-  const users = Object.keys(state.users);
-  const idx = users.indexOf(userId);
-  return USER_COLORS[idx % USER_COLORS.length];
+function getUserColor(uid) {
+  const name = state.users[uid]?.name || '';
+  const idx = FIXED_USERS.indexOf(name);
+  return USER_COLORS[idx >= 0 ? idx : 0];
 }
 function initials(name) {
-  return name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
 }
 
-// ─── ONBOARDING ─────────────────────────────────────────────────
+// ─── ONBOARDING ──────────────────────────────────────────────────
 loadState();
 
 function showOnboard() {
   document.getElementById('screen-onboard').classList.add('active');
   document.getElementById('screen-main').classList.remove('active');
-  const existingIds = Object.keys(state.users);
-  const euWrap = document.getElementById('existingUsers');
-  const pillsEl = document.getElementById('userPills');
-  if (existingIds.length > 0) {
-    euWrap.style.display = '';
-    pillsEl.innerHTML = existingIds.map(uid => {
-      const u = state.users[uid];
-      const col = getUserColor(uid);
-      return `<span class="user-pill" onclick="loginAs('${uid}')"><span class="av-sm" style="background:${col};color:white">${initials(u.name)}</span>${u.name}</span>`;
-    }).join('');
-  } else {
-    euWrap.style.display = 'none';
-  }
-  document.getElementById('nameInput').focus();
+  document.getElementById('nameSelect').value = '';
 }
-
-document.getElementById('nameInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter') startSession();
-});
 
 function startSession() {
-  const name = document.getElementById('nameInput').value.trim();
+  const name = document.getElementById('nameSelect').value;
   if (!name) return;
-  const uid = 'u_' + name.toLowerCase().replace(/\s+/g,'_') + '_' + Date.now().toString(36).slice(-4);
-  state.users[uid] = { name, createdAt: Date.now() };
-  saveState();
+  const uid = nameToUid(name);
+  if (!state.users[uid]) {
+    state.users[uid] = { name, createdAt: Date.now() };
+    saveState();
+  }
   enterApp(uid);
 }
 
-function loginAs(uid) {
-  enterApp(uid);
-}
-
-function changeUser() {
-  document.getElementById('nameInput').value = '';
-  showOnboard();
-}
+function changeUser() { showOnboard(); }
 
 function enterApp(uid) {
   currentUser = uid;
@@ -792,32 +884,35 @@ function enterApp(uid) {
   document.getElementById('headerName').textContent = u.name;
   document.getElementById('screen-onboard').classList.remove('active');
   document.getElementById('screen-main').classList.add('active');
+  showTab('build');
   renderBuild();
 }
 
-// ─── PKG / TAB SWITCHING ────────────────────────────────────────
+// ─── TAB / PKG SWITCHING ─────────────────────────────────────────
 function switchPkg(pkg) {
   currentPkg = pkg;
-  document.getElementById('ptab-790').className = 'pkg-tab' + (pkg==='790'?' active':'');
-  document.getElementById('ptab-890').className = 'pkg-tab' + (pkg==='890'?' active':'');
+  document.getElementById('ptab-790').className = 'pkg-tab' + (pkg === '790' ? ' active' : '');
+  document.getElementById('ptab-890').className = 'pkg-tab' + (pkg === '890' ? ' active' : '');
   renderBuild();
 }
 
 function showTab(tab) {
-  document.getElementById('tab-build').style.display = tab==='build' ? '' : 'none';
-  document.getElementById('tab-summary').style.display = tab==='summary' ? '' : 'none';
-  document.getElementById('buildBar').style.display = tab==='build' ? '' : 'none';
-  document.getElementById('navBuild').className = 'nav-tab' + (tab==='build'?' active':'');
-  document.getElementById('navSummary').className = 'nav-tab' + (tab==='summary'?' active':'');
+  ['build','summary','results'].forEach(t => {
+    document.getElementById('tab-' + t).style.display = t === tab ? '' : 'none';
+  });
+  document.getElementById('buildBar').style.display = tab === 'build' ? '' : 'none';
+  ['Build','Summary','Results'].forEach(t => {
+    document.getElementById('nav' + t).className = 'nav-tab' + (tab === t.toLowerCase() ? ' active' : '');
+  });
   if (tab === 'summary') renderSummary();
+  if (tab === 'results') renderResults();
 }
 
-// ─── MY SELECTIONS (per user, per pkg) ──────────────────────────
-function mySelKey(pkg, idx) { return `${pkg}_${idx}`; }
+// ─── SELECTION HELPERS ───────────────────────────────────────────
+function mySelKey(pkg, idx) { return pkg + '_' + idx; }
 
 function getMySel(pkg, idx) {
-  const s = state.selections[currentUser];
-  return s[mySelKey(pkg, idx)] || [];
+  return state.selections[currentUser]?.[mySelKey(pkg, idx)] || [];
 }
 
 function setMySel(pkg, idx, arr) {
@@ -825,141 +920,101 @@ function setMySel(pkg, idx, arr) {
   state.selections[currentUser][mySelKey(pkg, idx)] = arr;
 }
 
-// ─── RENDER BUILD ───────────────────────────────────────────────
+// ─── RENDER BUILD ────────────────────────────────────────────────
 function renderBuild() {
   const pkg = currentPkg;
   const secs = packages[pkg];
-  const wrap = document.getElementById('sectionsWrap');
 
-  // Progress strip
   const strip = document.getElementById('progressStrip');
   strip.innerHTML = secs.map((sec, idx) => {
     const label = sec.label || menuData[sec.key].label;
-    const sel = getMySel(pkg, idx);
-    const count = sel.length;
-    const cls = count === sec.quota ? 'done' : count > 0 ? 'partial' : '';
-    return `<span class="prog-chip ${cls}">${label}: ${count}/${sec.quota}</span>`;
+    const cnt = getMySel(pkg, idx).length;
+    const cls = cnt === sec.quota ? 'done' : cnt > 0 ? 'partial' : '';
+    return `<span class="prog-chip ${cls}">${label}: ${cnt}/${sec.quota}</span>`;
   }).join('');
 
-  // Section cards
-  wrap.innerHTML = secs.map((sec, idx) => {
+  document.getElementById('sectionsWrap').innerHTML = secs.map((sec, idx) => {
     const mdata = menuData[sec.key];
     const label = sec.label || mdata.label;
     const sel = getMySel(pkg, idx);
-    const count = sel.length;
-    const quotaCls = count === sec.quota ? 'done' : count > 0 ? 'partial' : '';
-
-    // Who else picked in this section
+    const cnt = sel.length;
+    const qcls = cnt === sec.quota ? 'done' : cnt > 0 ? 'partial' : '';
     const voterNames = getVotersForSection(pkg, idx);
-    const voterHtml = voterNames.length > 0
-      ? `<div class="section-voters">${voterNames.map(v=>`<span class="voter-tag">${v}</span>`).join('')}</div>`
-      : '';
-
-    // Body choices
-    const subsHtml = Object.entries(mdata.subs).map(([subName, items]) => {
-      const subLabel = Object.keys(mdata.subs).length > 1
-        ? `<div class="sub-label">${subName}</div>` : '';
-      const itemsHtml = items.map(item => {
-        const isSel = sel.includes(item);
-        const voters = getVotersForItem(pkg, idx, item);
-        const voterAvatars = voters.map(v => {
-          const col = getUserColor(v.uid);
-          return `<span class="choice-voter-av" style="background:${col};color:white;font-size:8px;width:18px;height:18px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;">${initials(v.name)}</span>`;
-        }).join('');
-        return `<div class="choice-row${isSel?' selected':''}" onclick="toggleItem(${idx},'${escQ(item)}',${sec.quota})">
-          <div class="choice-check">
-            <svg class="check-mark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"/></svg>
-          </div>
-          <div class="choice-info">
-            <div class="choice-name">${item}</div>
-            ${voters.length > 0 ? `<div class="choice-voters">${voterAvatars}</div>` : ''}
-          </div>
-        </div>`;
-      }).join('');
-      return subLabel + itemsHtml;
-    }).join('');
-
+    const voterHtml = voterNames.length
+      ? `<div class="section-voters">${voterNames.map(v => `<span class="voter-tag">${v}</span>`).join('')}</div>` : '';
+    const bodyHtml = buildSectionBody(mdata, sec, idx, sel);
     return `<div class="section-card" id="card_${pkg}_${idx}">
       <div class="section-head" onclick="toggleCard(${idx})">
         <div class="section-head-left">
           <span class="section-label">${label}</span>
-          <span class="section-quota-badge ${quotaCls}" id="badge_${pkg}_${idx}">${count}/${sec.quota}</span>
+          <span class="section-quota-badge ${qcls}" id="badge_${pkg}_${idx}">${cnt}/${sec.quota}</span>
         </div>
         <span class="chevron">▾</span>
       </div>
       ${voterHtml}
-      <div class="section-body">${subsHtml}</div>
+      <div class="section-body">${bodyHtml}</div>
     </div>`;
   }).join('');
 }
 
-function escQ(s) { return s.replace(/'/g, "\\'"); }
+function buildSectionBody(mdata, sec, idx, sel) {
+  const pkg = currentPkg;
+  return Object.entries(mdata.subs).map(([subName, items]) => {
+    const subLabel = Object.keys(mdata.subs).length > 1 ? `<div class="sub-label">${subName}</div>` : '';
+    return subLabel + items.map(item => {
+      const isSel = sel.includes(item);
+      const voters = getVotersForItem(pkg, idx, item);
+      const avs = voters.map(v => {
+        const col = getUserColor(v.uid);
+        return `<span class="choice-voter-av" style="background:${col};color:white">${initials(v.name)}</span>`;
+      }).join('');
+      return `<div class="choice-row${isSel ? ' selected' : ''}" onclick="toggleItem(${idx},'${escQ(item)}',${sec.quota})">
+        <div class="choice-check"><svg class="check-mark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"/></svg></div>
+        <div class="choice-info">
+          <div class="choice-name">${item}</div>
+          ${voters.length ? `<div class="choice-voters">${avs}</div>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  }).join('');
+}
+
+function escQ(s) { return s.replace(/\\/g, '\\\\').replace(/'/g, "\\'"); }
 
 function toggleCard(idx) {
-  const card = document.getElementById(`card_${currentPkg}_${idx}`);
-  card.classList.toggle('open');
+  document.getElementById(`card_${currentPkg}_${idx}`).classList.toggle('open');
 }
 
 function toggleItem(idx, item, quota) {
   const pkg = currentPkg;
   let sel = [...getMySel(pkg, idx)];
   const pos = sel.indexOf(item);
-  if (pos >= 0) {
-    sel.splice(pos, 1);
-  } else {
-    if (sel.length >= quota) sel.shift();
-    sel.push(item);
-  }
+  if (pos >= 0) { sel.splice(pos, 1); }
+  else { if (sel.length >= quota) sel.shift(); sel.push(item); }
   setMySel(pkg, idx, sel);
+  saveState();
   updateSection(idx);
 }
 
 function updateSection(idx) {
   const pkg = currentPkg;
-  const secs = packages[pkg];
-  const sec = secs[idx];
+  const sec = packages[pkg][idx];
   const sel = getMySel(pkg, idx);
-  const count = sel.length;
-  const quotaCls = count === sec.quota ? 'done' : count > 0 ? 'partial' : '';
+  const cnt = sel.length;
+  const qcls = cnt === sec.quota ? 'done' : cnt > 0 ? 'partial' : '';
 
-  // Update badge
   const badge = document.getElementById(`badge_${pkg}_${idx}`);
-  if (badge) { badge.textContent = `${count}/${sec.quota}`; badge.className = `section-quota-badge ${quotaCls}`; }
+  if (badge) { badge.textContent = `${cnt}/${sec.quota}`; badge.className = `section-quota-badge ${qcls}`; }
 
-  // Update progress strip
   const chips = document.getElementById('progressStrip').children;
   if (chips[idx]) {
-    const label = sec.label || menuData[sec.key].label;
-    chips[idx].textContent = `${label}: ${count}/${sec.quota}`;
-    chips[idx].className = `prog-chip ${quotaCls}`;
+    chips[idx].textContent = `${sec.label || menuData[sec.key].label}: ${cnt}/${sec.quota}`;
+    chips[idx].className = `prog-chip ${qcls}`;
   }
 
-  // Re-render choice rows inside the open card
   const card = document.getElementById(`card_${pkg}_${idx}`);
-  if (card && card.classList.contains('open')) {
-    const body = card.querySelector('.section-body');
-    const mdata = menuData[sec.key];
-    body.innerHTML = Object.entries(mdata.subs).map(([subName, items]) => {
-      const subLabel = Object.keys(mdata.subs).length > 1 ? `<div class="sub-label">${subName}</div>` : '';
-      const itemsHtml = items.map(item => {
-        const isSel = sel.includes(item);
-        const voters = getVotersForItem(pkg, idx, item);
-        const voterAvatars = voters.map(v => {
-          const col = getUserColor(v.uid);
-          return `<span class="choice-voter-av" style="background:${col};color:white;font-size:8px;width:18px;height:18px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;">${initials(v.name)}</span>`;
-        }).join('');
-        return `<div class="choice-row${isSel?' selected':''}" onclick="toggleItem(${idx},'${escQ(item)}',${sec.quota})">
-          <div class="choice-check">
-            <svg class="check-mark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"/></svg>
-          </div>
-          <div class="choice-info">
-            <div class="choice-name">${item}</div>
-            ${voters.length > 0 ? `<div class="choice-voters">${voterAvatars}</div>` : ''}
-          </div>
-        </div>`;
-      }).join('');
-      return subLabel + itemsHtml;
-    }).join('');
+  if (card?.classList.contains('open')) {
+    card.querySelector('.section-body').innerHTML = buildSectionBody(menuData[sec.key], sec, idx, sel);
   }
 }
 
@@ -967,20 +1022,14 @@ function updateSection(idx) {
 function getVotersForSection(pkg, idx) {
   return Object.entries(state.selections)
     .filter(([uid]) => uid !== currentUser && state.users[uid])
-    .filter(([uid, usels]) => {
-      const items = usels[mySelKey(pkg, idx)] || [];
-      return items.length > 0;
-    })
+    .filter(([, usels]) => (usels[mySelKey(pkg, idx)] || []).length > 0)
     .map(([uid]) => state.users[uid].name);
 }
 
 function getVotersForItem(pkg, idx, item) {
   return Object.entries(state.selections)
     .filter(([uid]) => state.users[uid])
-    .filter(([uid, usels]) => {
-      const items = usels[mySelKey(pkg, idx)] || [];
-      return items.includes(item);
-    })
+    .filter(([, usels]) => (usels[mySelKey(pkg, idx)] || []).includes(item))
     .map(([uid]) => ({ uid, name: state.users[uid].name }));
 }
 
@@ -991,41 +1040,37 @@ function saveSelections() {
   renderBuild();
 }
 
-// ─── SUMMARY ─────────────────────────────────────────────────────
+// ─── ALL PICKS (SUMMARY) ─────────────────────────────────────────
 function renderSummary() {
   const wrap = document.getElementById('summaryContent');
   const userIds = Object.keys(state.users);
-  if (userIds.length === 0) { wrap.innerHTML = '<p style="padding:24px;color:var(--text-muted)">No one has saved picks yet.</p>'; return; }
+  if (!userIds.length) {
+    wrap.innerHTML = '<p style="padding:24px;color:var(--text-muted)">No picks saved yet.</p>';
+    return;
+  }
 
-  let html = '<div style="padding:16px 4px 8px"><h2 style="font-family:Cormorant Garamond,serif;font-size:24px;color:var(--charcoal)">All picks</h2><p style="font-size:13px;color:var(--text-muted);margin-top:2px">See who chose what across both packages</p></div>';
+  let html = '<div style="padding:4px 4px 16px"><h2 style="font-family:Cormorant Garamond,serif;font-size:24px;color:var(--charcoal)">All picks</h2><p style="font-size:13px;color:var(--text-muted);margin-top:2px">Who chose what across both packages</p></div>';
 
-  // Per-user cards
   userIds.forEach(uid => {
     const u = state.users[uid];
     const col = getUserColor(uid);
     const isMe = uid === currentUser;
-    html += `<div style="margin-bottom:24px">`;
-    html += `<div style="display:flex;align-items:center;gap:10px;padding:0 4px;margin-bottom:10px">
-      <div style="width:36px;height:36px;border-radius:50%;background:${col};color:white;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;flex-shrink:0">${initials(u.name)}</div>
-      <div><div style="font-size:15px;font-weight:500;color:var(--text)">${u.name}${isMe?' (you)':''}</div>
-      <div style="font-size:12px;color:var(--text-muted)">Saved picks</div></div>
-    </div>`;
-
+    html += `<div style="margin-bottom:24px">
+      <div style="display:flex;align-items:center;gap:10px;padding:0 4px;margin-bottom:10px">
+        <div style="width:36px;height:36px;border-radius:50%;background:${col};color:white;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;flex-shrink:0">${initials(u.name)}</div>
+        <div><div style="font-size:15px;font-weight:500;color:var(--text)">${u.name}${isMe ? ' (you)' : ''}</div><div style="font-size:12px;color:var(--text-muted)">Saved picks</div></div>
+      </div>`;
     ['790','890'].forEach(pkg => {
       const secs = packages[pkg];
-      const hasPicks = secs.some((sec, idx) => (state.selections[uid]?.[mySelKey(pkg,idx)]||[]).length > 0);
-      if (!hasPicks) return;
-      html += `<div class="summary-pkg-card" style="margin-bottom:8px">`;
-      html += `<div class="summary-pkg-head"><span class="summary-pkg-name">Package ${pkg==='790'?'Two':'Three'}</span><span class="summary-pkg-price">₹${pkg}/person + GST</span></div>`;
+      if (!secs.some((s, i) => (state.selections[uid]?.[mySelKey(pkg, i)] || []).length)) return;
+      html += `<div class="summary-pkg-card">
+        <div class="summary-pkg-head"><span class="summary-pkg-name">Package ${pkg === '790' ? 'Two' : 'Three'}</span><span class="summary-pkg-price">₹${pkg}/person + GST</span></div>`;
       secs.forEach((sec, idx) => {
         const items = state.selections[uid]?.[mySelKey(pkg, idx)] || [];
-        if (items.length === 0) return;
+        if (!items.length) return;
         const label = sec.label || menuData[sec.key].label;
-        html += `<div class="summary-cat">`;
-        html += `<div class="summary-cat-head">${label} (${items.length}/${sec.quota})</div>`;
-        items.forEach(item => {
-          html += `<div class="summary-item">${item}</div>`;
-        });
+        html += `<div class="summary-cat"><div class="summary-cat-head">${label} (${items.length}/${sec.quota})</div>`;
+        items.forEach(item => { html += `<div class="summary-item">${item}</div>`; });
         html += `</div>`;
       });
       html += `</div>`;
@@ -1033,7 +1078,6 @@ function renderSummary() {
     html += `</div>`;
   });
 
-  // Overlap section
   html += renderOverlap();
   wrap.innerHTML = html;
 }
@@ -1042,11 +1086,9 @@ function renderOverlap() {
   const userIds = Object.keys(state.users);
   if (userIds.length < 2) return '';
   let html = `<div style="margin-bottom:24px"><div style="padding:0 4px;margin-bottom:12px"><h3 style="font-size:16px;font-weight:500;color:var(--charcoal)">Common picks</h3><p style="font-size:12px;color:var(--text-muted);margin-top:2px">Items chosen by 2 or more people</p></div>`;
-
   ['790','890'].forEach(pkg => {
-    const secs = packages[pkg];
     let pkgHtml = '';
-    secs.forEach((sec, idx) => {
+    packages[pkg].forEach((sec, idx) => {
       const allItems = {};
       userIds.forEach(uid => {
         (state.selections[uid]?.[mySelKey(pkg, idx)] || []).forEach(item => {
@@ -1054,27 +1096,128 @@ function renderOverlap() {
           allItems[item].push(uid);
         });
       });
-      const shared = Object.entries(allItems).filter(([,uids]) => uids.length >= 2);
-      if (shared.length === 0) return;
+      const shared = Object.entries(allItems).filter(([, uids]) => uids.length >= 2);
+      if (!shared.length) return;
       const label = sec.label || menuData[sec.key].label;
       pkgHtml += `<div class="summary-cat"><div class="summary-cat-head">${label}</div>`;
       shared.forEach(([item, uids]) => {
-        const names = uids.map(uid => state.users[uid]?.name||'?').join(', ');
-        pkgHtml += `<div class="summary-item" style="flex-direction:column;align-items:flex-start;gap:2px">
-          <span>${item}</span>
-          <span style="font-size:11px;color:var(--text-muted)">${names}</span>
-        </div>`;
+        const names = uids.map(uid => state.users[uid]?.name || '?').join(', ');
+        pkgHtml += `<div class="summary-item" style="flex-direction:column;align-items:flex-start;gap:2px"><span>${item}</span><span style="font-size:11px;color:var(--text-muted)">${names}</span></div>`;
       });
       pkgHtml += `</div>`;
     });
     if (!pkgHtml) return;
-    html += `<div class="summary-pkg-card" style="margin-bottom:8px">`;
-    html += `<div class="summary-pkg-head"><span class="summary-pkg-name">Package ${pkg==='790'?'Two':'Three'}</span><span class="summary-pkg-price">₹${pkg}/person + GST</span></div>`;
-    html += pkgHtml;
-    html += `</div>`;
+    html += `<div class="summary-pkg-card"><div class="summary-pkg-head"><span class="summary-pkg-name">Package ${pkg === '790' ? 'Two' : 'Three'}</span><span class="summary-pkg-price">₹${pkg}/person + GST</span></div>${pkgHtml}</div>`;
+  });
+  return html + `</div>`;
+}
+
+// ─── RESULTS DASHBOARD ───────────────────────────────────────────
+function renderResults() {
+  const wrap = document.getElementById('resultsContent');
+
+  // ── Person status grid ──
+  let html = `<div class="results-screen-header"><h2>Results</h2><p>See what everyone is picking</p></div>`;
+  html += `<div class="results-grid">`;
+
+  FIXED_USERS.forEach(name => {
+    const uid = nameToUid(name);
+    const col = getUserColor(uid);
+    const isMe = uid === currentUser;
+
+    let totalItems = 0, totalQuota = 0;
+    ['790','890'].forEach(pkg => {
+      packages[pkg].forEach((sec, idx) => {
+        totalQuota += sec.quota;
+        totalItems += (state.selections[uid]?.[mySelKey(pkg, idx)] || []).length;
+      });
+    });
+
+    const pct = totalQuota > 0 ? Math.min(100, Math.round(totalItems / totalQuota * 100)) : 0;
+
+    html += `<div class="result-person-card${isMe ? ' me' : ''}">
+      <div class="rpc-top">
+        <div class="rpc-avatar" style="background:${col}">${initials(name)}</div>
+        <div class="rpc-info">
+          <div class="rpc-name">${name}${isMe ? ' ✦' : ''}</div>
+          <div class="rpc-status">${totalItems > 0 ? `${totalItems} items` : 'Not started'}</div>
+        </div>
+      </div>
+      <div class="rpc-count">${pct}<span>%</span></div>
+      <div class="rpc-bar-bg"><div class="rpc-bar-fill" style="width:${pct}%;background:${col}"></div></div>
+    </div>`;
   });
   html += `</div>`;
-  return html;
+
+  // ── Item popularity by package ──
+  let anyVotes = false;
+
+  ['790','890'].forEach(pkg => {
+    const secs = packages[pkg];
+    const pkgHasVotes = secs.some((sec, idx) =>
+      FIXED_USERS.some(name => (state.selections[nameToUid(name)]?.[mySelKey(pkg, idx)] || []).length > 0)
+    );
+    if (!pkgHasVotes) return;
+    anyVotes = true;
+
+    if (!anyVotes) html += `<div class="results-divider">Item Popularity</div>`;
+    html += `<div class="results-pkg-block">`;
+    html += `<div class="results-pkg-badge">Package ${pkg === '790' ? 'Two' : 'Three'} · ₹${pkg}</div>`;
+
+    secs.forEach((sec, idx) => {
+      const label = sec.label || menuData[sec.key].label;
+
+      const itemVotes = {};
+      FIXED_USERS.forEach(name => {
+        const uid = nameToUid(name);
+        (state.selections[uid]?.[mySelKey(pkg, idx)] || []).forEach(item => {
+          if (!itemVotes[item]) itemVotes[item] = [];
+          itemVotes[item].push({ name, uid });
+        });
+      });
+
+      const voted = Object.entries(itemVotes).sort((a, b) => b[1].length - a[1].length);
+      if (!voted.length) return;
+
+      const maxV = voted[0][1].length;
+      const sectionVoters = [...new Set(voted.flatMap(([, v]) => v.map(x => x.uid)))];
+      const sectionDots = sectionVoters.map(uid => {
+        return `<span class="results-cat-dot" style="background:${getUserColor(uid)}" title="${state.users[uid]?.name}"></span>`;
+      }).join('');
+
+      html += `<div class="results-category">
+        <div class="results-cat-head"><span>${label}</span><div class="results-cat-voters">${sectionDots}</div></div>`;
+
+      voted.forEach(([item, voters]) => {
+        const barPct = maxV > 0 ? (voters.length / maxV) * 100 : 0;
+        const dots = voters.map(v =>
+          `<span class="result-voter-dot" style="background:${getUserColor(v.uid)}" title="${v.name}"></span>`
+        ).join('');
+        html += `<div class="result-item-row">
+          <div class="result-item-name" title="${item}">${item}</div>
+          <div class="result-item-bar-wrap"><div class="result-item-bar" style="width:${barPct}%"></div></div>
+          <div class="result-item-dots">${dots}</div>
+          <div class="result-item-count">${voters.length}</div>
+        </div>`;
+      });
+
+      html += `</div>`;
+    });
+
+    html += `</div>`;
+  });
+
+  if (!anyVotes) {
+    html += `<div class="results-empty">No picks yet — start building your menu!</div>`;
+  } else {
+    // Prepend the "Item Popularity" heading before the blocks
+    html = html.replace(
+      '<div class="results-pkg-block">',
+      `<div class="results-divider">Item Popularity</div><div class="results-pkg-block">`
+    );
+  }
+
+  wrap.innerHTML = html;
 }
 
 // ─── EXPORT ──────────────────────────────────────────────────────
@@ -1085,24 +1228,21 @@ function buildWhatsAppText() {
   lines.push(`👤 ${u.name}`);
   lines.push(`📅 ${new Date().toLocaleDateString('en-IN', {day:'numeric',month:'long',year:'numeric'})}`);
   lines.push('');
-
   ['790','890'].forEach(pkg => {
     const secs = packages[pkg];
-    const hasPicks = secs.some((sec, idx) => getMySel(pkg, idx).length > 0);
-    if (!hasPicks) return;
+    if (!secs.some((s, i) => getMySel(pkg, i).length)) return;
     lines.push(`━━━━━━━━━━━━━━━━━━`);
-    lines.push(`*Package ${pkg==='790'?'Two':'Three'} – ₹${pkg}/person + GST*`);
+    lines.push(`*Package ${pkg === '790' ? 'Two' : 'Three'} – ₹${pkg}/person + GST*`);
     lines.push('');
     secs.forEach((sec, idx) => {
       const items = getMySel(pkg, idx);
-      if (items.length === 0) return;
+      if (!items.length) return;
       const label = sec.label || menuData[sec.key].label;
       lines.push(`*${label}* (${items.length}/${sec.quota})`);
       items.forEach(item => lines.push(`  • ${item}`));
       lines.push('');
     });
   });
-
   lines.push(`━━━━━━━━━━━━━━━━━━`);
   lines.push(`📍 Opp. Hillock Hotel, New Chandkheda, Ahmedabad`);
   lines.push(`📞 Restaurant: +91 7861895107`);
@@ -1110,45 +1250,29 @@ function buildWhatsAppText() {
 }
 
 function showExport() {
-  const text = buildWhatsAppText();
-  document.getElementById('exportText').textContent = text;
+  document.getElementById('exportText').textContent = buildWhatsAppText();
   document.getElementById('exportModal').classList.add('open');
 }
 
 function copyExport() {
   const text = document.getElementById('exportText').textContent;
   if (navigator.clipboard) {
-    navigator.clipboard.writeText(text).then(() => {
-      closeModal();
-      showToast('Copied! Paste into WhatsApp ✓');
-    });
+    navigator.clipboard.writeText(text).then(() => { closeModal(); showToast('Copied! Paste into WhatsApp ✓'); });
   } else {
     const ta = document.createElement('textarea');
-    ta.value = text;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-    closeModal();
-    showToast('Copied! Paste into WhatsApp ✓');
+    ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+    closeModal(); showToast('Copied! Paste into WhatsApp ✓');
   }
 }
 
-function closeModal() {
-  document.getElementById('exportModal').classList.remove('open');
-}
-
-// Close modal on backdrop click
-document.getElementById('exportModal').addEventListener('click', function(e) {
-  if (e.target === this) closeModal();
-});
+function closeModal() { document.getElementById('exportModal').classList.remove('open'); }
+document.getElementById('exportModal').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
 
 // ─── TOAST ───────────────────────────────────────────────────────
 let toastTimer;
 function showToast(msg) {
   const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
+  t.textContent = msg; t.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
 }
