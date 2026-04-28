@@ -866,24 +866,29 @@ function setupRealtimeListeners() {
     state.users = snap.val() || {};
   });
 
-  // Listen to all selections — re-render on first fire and whenever peers change their picks
+  // Listen to all selections
   let _firstSelectionsFire = true;
   db.ref(`${DB_ROOT}/selections`).on('value', snap => {
     const incoming = snap.val() || {};
 
+    if (_firstSelectionsFire) {
+      // First fire: restore ALL saved data including current user's previous picks
+      _firstSelectionsFire = false;
+      Object.assign(state.selections, incoming);
+      refreshCurrentView();
+      return;
+    }
+
+    // Subsequent fires: only sync other users; current user's local state is authoritative
     const remoteChanged = Object.keys(incoming)
       .filter(uid => uid !== currentUser)
       .some(uid => JSON.stringify(incoming[uid]) !== JSON.stringify(state.selections[uid]));
 
-    // Merge remote data; don't overwrite current user's in-memory state
     Object.keys(incoming).forEach(uid => {
       if (uid !== currentUser) state.selections[uid] = incoming[uid];
     });
 
-    if (_firstSelectionsFire || remoteChanged) {
-      _firstSelectionsFire = false;
-      refreshCurrentView();
-    }
+    if (remoteChanged) refreshCurrentView();
   });
 }
 
