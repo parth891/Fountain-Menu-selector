@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>The Fountain – Menu Planner</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap');
 
@@ -716,8 +718,21 @@ body {
 <div class="toast" id="toast"></div>
 
 <script>
+// ─── FIREBASE ────────────────────────────────────────────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyCu8-fyN3wj3CO1Cte0FRICzhxIZJpv1zg",
+  authDomain: "fountain-menu.firebaseapp.com",
+  databaseURL: "https://fountain-menu-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "fountain-menu",
+  storageBucket: "fountain-menu.firebasestorage.app",
+  messagingSenderId: "792538952753",
+  appId: "1:792538952753:web:7b169236c1f620bede5110"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const DB_ROOT = 'fountain_v2';
+
 // ─── CONSTANTS ───────────────────────────────────────────────────
-const STORAGE_KEY = 'fountain_v2';
 const FIXED_USERS = ['Parth','Karan','Isha','Urvashi','Hemant','Niharika'];
 const USER_COLORS = ['#B8933F','#2D6A4F','#8B2FC9','#C62828','#1565C0','#6D4C41'];
 
@@ -835,12 +850,39 @@ const packages = {
 let state = { users: {}, selections: {} };
 let currentUser = null;
 let currentPkg = '790';
+let _listenersActive = false;
 
-function loadState() {
-  try { const r = localStorage.getItem(STORAGE_KEY); if (r) state = JSON.parse(r); } catch(e) {}
+function saveCurrentUserSelections() {
+  if (!currentUser) return;
+  db.ref(`${DB_ROOT}/selections/${currentUser}`).set(state.selections[currentUser] || {});
 }
-function saveState() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+
+function setupRealtimeListeners() {
+  if (_listenersActive) return;
+  _listenersActive = true;
+
+  // Listen to all users' profile info
+  db.ref(`${DB_ROOT}/users`).on('value', snap => {
+    state.users = snap.val() || {};
+  });
+
+  // Listen to all selections — re-render when remote peers change their picks
+  db.ref(`${DB_ROOT}/selections`).on('value', snap => {
+    const incoming = snap.val() || {};
+
+    // Check if any other user's data actually changed
+    const remoteChanged = Object.keys(incoming)
+      .filter(uid => uid !== currentUser)
+      .some(uid => JSON.stringify(incoming[uid]) !== JSON.stringify(state.selections[uid]));
+
+    // Merge remote data; don't overwrite current user's in-memory state
+    // (local state is always authoritative for the current user)
+    Object.keys(incoming).forEach(uid => {
+      if (uid !== currentUser) state.selections[uid] = incoming[uid];
+    });
+
+    if (remoteChanged) refreshCurrentView();
+  });
 }
 
 function getUserColor(uid) {
@@ -853,39 +895,44 @@ function initials(name) {
 }
 
 // ─── ONBOARDING ──────────────────────────────────────────────────
-loadState();
-
 function showOnboard() {
   document.getElementById('screen-onboard').classList.add('active');
   document.getElementById('screen-main').classList.remove('active');
-  document.getElementById('nameSelect').value = '';
+  const last = localStorage.getItem('fountain_last_user');
+  if (last) document.getElementById('nameSelect').value = last;
 }
 
 function startSession() {
   const name = document.getElementById('nameSelect').value;
   if (!name) return;
+  localStorage.setItem('fountain_last_user', name);
   const uid = nameToUid(name);
-  if (!state.users[uid]) {
-    state.users[uid] = { name, createdAt: Date.now() };
-    saveState();
-  }
-  enterApp(uid);
+  // Write user profile (creates or updates)
+  db.ref(`${DB_ROOT}/users/${uid}`).set({ name, updatedAt: Date.now() });
+  enterApp(uid, name);
 }
 
 function changeUser() { showOnboard(); }
 
-function enterApp(uid) {
+function enterApp(uid, name) {
   currentUser = uid;
   if (!state.selections[uid]) state.selections[uid] = {};
-  const u = state.users[uid];
+
+  // Use name from arg (fast) or fall back to state (if returning user)
+  const displayName = name || state.users[uid]?.name || uid;
   const col = getUserColor(uid);
   document.getElementById('headerAvatar').style.background = col;
-  document.getElementById('headerAvatar').textContent = initials(u.name);
-  document.getElementById('headerName').textContent = u.name;
+  document.getElementById('headerAvatar').textContent = initials(displayName);
+  document.getElementById('headerName').textContent = displayName;
+
   document.getElementById('screen-onboard').classList.remove('active');
   document.getElementById('screen-main').classList.add('active');
+
+  // Show loading placeholder, then set up live listener (first fire renders build)
+  document.getElementById('sectionsWrap').innerHTML =
+    '<div style="padding:40px;text-align:center;color:var(--text-muted);font-size:14px">Loading…</div>';
   showTab('build');
-  renderBuild();
+  setupRealtimeListeners();
 }
 
 // ─── TAB / PKG SWITCHING ─────────────────────────────────────────
@@ -992,7 +1039,7 @@ function toggleItem(idx, item, quota) {
   if (pos >= 0) { sel.splice(pos, 1); }
   else { if (sel.length >= quota) sel.shift(); sel.push(item); }
   setMySel(pkg, idx, sel);
-  saveState();
+  saveCurrentUserSelections();
   updateSection(idx);
 }
 
@@ -1035,9 +1082,30 @@ function getVotersForItem(pkg, idx, item) {
 
 // ─── SAVE ────────────────────────────────────────────────────────
 function saveSelections() {
-  saveState();
+  saveCurrentUserSelections();
   showToast('Picks saved!');
-  renderBuild();
+}
+
+function refreshCurrentView() {
+  if (!document.getElementById('screen-main').classList.contains('active')) return;
+  const active = ['Build','Summary','Results'].find(t =>
+    document.getElementById('nav' + t)?.classList.contains('active')
+  );
+  if (active === 'Build') {
+    // Preserve which section cards are open
+    const pkg = currentPkg;
+    const open = packages[pkg].map((_, i) =>
+      document.getElementById(`card_${pkg}_${i}`)?.classList.contains('open') || false
+    );
+    renderBuild();
+    open.forEach((wasOpen, i) => {
+      if (wasOpen) document.getElementById(`card_${pkg}_${i}`)?.classList.add('open');
+    });
+  } else if (active === 'Summary') {
+    renderSummary();
+  } else if (active === 'Results') {
+    renderResults();
+  }
 }
 
 // ─── ALL PICKS (SUMMARY) ─────────────────────────────────────────
@@ -1279,6 +1347,10 @@ function showToast(msg) {
 
 // ─── INIT ────────────────────────────────────────────────────────
 showOnboard();
+// Pre-warm Firebase connection so first real-time fire is fast
+db.ref(`${DB_ROOT}/users`).once('value').then(snap => {
+  state.users = snap.val() || {};
+});
 </script>
 </body>
 </html>
